@@ -3,8 +3,6 @@ package br.com.leonardoferreira;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 class NoArgsConstructorUsingAccessorsConverter implements Converter {
 
@@ -18,8 +16,7 @@ class NoArgsConstructorUsingAccessorsConverter implements Converter {
         this.propertyParsers = propertyParsers;
     }
 
-    public static NoArgsConstructorUsingAccessorsConverter from(final Method method,
-                                                                final Map<Class<?>, Function<Object, Object>> typeAdapters) {
+    public static NoArgsConstructorUsingAccessorsConverter from(final Method method, final TypeAdapters typeAdapters) {
         final Class<?> outputClass = method.getReturnType();
 
         final Constructor<?> constructor = Try.sneakyThrow(outputClass::getConstructor);
@@ -31,7 +28,7 @@ class NoArgsConstructorUsingAccessorsConverter implements Converter {
         );
     }
 
-    public Object convert(final Class<?> returnType, final Object... args) {
+    public Object convert(final Object... args) {
         final Object input = args[0];
         final Object output = Try.sneakyThrow(constructor::newInstance);
 

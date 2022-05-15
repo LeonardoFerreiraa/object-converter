@@ -5,17 +5,16 @@ import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.function.Function;
 
 public class ObjectConverter {
 
-    private static final Map<Class<?>, Function<Object, Object>> DEFAULT_TYPE_ADAPTERS = Pair.mapOf(
-            Pair.of(String.class, String::valueOf),
-            Pair.of(Integer.class, it -> Integer.parseInt(String.valueOf(it))),
-            Pair.of(Long.class, it -> Long.parseLong(String.valueOf(it))),
-            Pair.of(Double.class, it -> Double.parseDouble(String.valueOf(it))),
-            Pair.of(Float.class, it -> Float.parseFloat(String.valueOf(it))),
-            Pair.of(BigDecimal.class, it -> new BigDecimal(String.valueOf(it)))
+    private static final TypeAdapters DEFAULT_TYPE_ADAPTERS = TypeAdapters.from(
+            new TypeAdapter<>(String.class, String::valueOf),
+            new TypeAdapter<>(Integer.class, it -> Integer.parseInt(String.valueOf(it))),
+            new TypeAdapter<>(Long.class, it -> Long.parseLong(String.valueOf(it))),
+            new TypeAdapter<>(Double.class, it -> Double.parseDouble(String.valueOf(it))),
+            new TypeAdapter<>(Float.class, it -> Float.parseFloat(String.valueOf(it))),
+            new TypeAdapter<>(BigDecimal.class, it -> new BigDecimal(String.valueOf(it)))
     );
 
     private ObjectConverter() throws IllegalAccessException {
@@ -27,7 +26,7 @@ public class ObjectConverter {
                 .map(method ->
                         Pair.of(
                                 method,
-                                method.isDefault() ? DefaultMethodHandler.from(method) : ConverterMethodHandler.from(method, DEFAULT_TYPE_ADAPTERS)
+                                method.isDefault() ? DefaultMethodHandler.from(method) : new ConverterMethodHandler(Converter.converterFor(method, DEFAULT_TYPE_ADAPTERS))
                         )
                 )
                 .collect(Pair.toMap());
