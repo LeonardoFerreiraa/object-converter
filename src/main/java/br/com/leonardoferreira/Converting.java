@@ -5,8 +5,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apiguardian.api.API;
+
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@API(status = API.Status.STABLE, since = "1.0.0")
 public @interface Converting {
 
     ConvertingProperty[] properties();

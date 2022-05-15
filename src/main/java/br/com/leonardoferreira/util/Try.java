@@ -1,6 +1,9 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.util;
 
-class Try {
+import org.apiguardian.api.API;
+
+@API(status = API.Status.INTERNAL)
+public class Try {
 
     public static <T> T orNull(final SupplierThatThrows<T> supplier) {
         try {
@@ -28,7 +31,7 @@ class Try {
     }
 
     @FunctionalInterface
-    interface SupplierThatThrows<T> {
+    public interface SupplierThatThrows<T> {
         T get() throws Throwable;
     }
 

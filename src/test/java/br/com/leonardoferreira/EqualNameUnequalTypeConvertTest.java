@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class SameNameDifferentTypesConverterTest {
+class EqualNameUnequalTypeConvertTest {
 
     @Test
     void shouldDoAConversionWhenPropertiesHasTheSameNameAndDifferentTypesTest() {

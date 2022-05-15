@@ -1,8 +1,12 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.converter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
+
+import br.com.leonardoferreira.domain.PropertyParser;
+import br.com.leonardoferreira.domain.TypeAdapters;
+import br.com.leonardoferreira.util.Try;
 
 class NoArgsConstructorUsingAccessorsConverter implements Converter {
 

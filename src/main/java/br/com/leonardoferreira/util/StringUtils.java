@@ -1,12 +1,15 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.util;
 
-class StringUtils {
+import org.apiguardian.api.API;
 
-    public StringUtils() throws IllegalAccessException {
+@API(status = API.Status.INTERNAL)
+public class StringUtils {
+
+    private StringUtils() throws IllegalAccessException {
         throw new IllegalAccessException();
     }
 
-    static String capitalize(final String str) {
+    public static String capitalize(final String str) {
         if (str == null) {
             return null;
         }

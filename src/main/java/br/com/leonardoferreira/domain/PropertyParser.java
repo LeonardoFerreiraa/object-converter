@@ -1,4 +1,4 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.domain;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -8,17 +8,21 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-class PropertyParser {
+import br.com.leonardoferreira.Converting;
+import br.com.leonardoferreira.util.Pair;
+import br.com.leonardoferreira.util.ReflectionUtils;
+import org.apiguardian.api.API;
+
+@API(status = API.Status.INTERNAL)
+public class PropertyParser {
 
     private final Attribute inputAttribute;
 
     private final Attribute outputAttribute;
 
-    private final TypeAdapter<?> typeAdapter;
+    private final TypeAdapter typeAdapter;
 
-    public PropertyParser(final Attribute inputAttribute,
-                          final Attribute outputAttribute,
-                          final TypeAdapter<?> typeAdapter) {
+    public PropertyParser(final Attribute inputAttribute, final Attribute outputAttribute, final TypeAdapter typeAdapter) {
         this.inputAttribute = inputAttribute;
         this.outputAttribute = outputAttribute;
         this.typeAdapter = typeAdapter;
@@ -50,7 +54,7 @@ class PropertyParser {
         }
 
         final Attribute outputAttribute = field.getSecond();
-        final TypeAdapter<?> typeAdapter = typeAdapters.adapterFor(inputAttribute.getType(), outputAttribute.getType());
+        final TypeAdapter typeAdapter = typeAdapters.adapterFor(inputAttribute.getType(), outputAttribute.getType());
 
         return new PropertyParser(inputAttribute, outputAttribute, typeAdapter);
     }

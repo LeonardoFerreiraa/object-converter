@@ -1,7 +1,8 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.util;
 
 import java.io.IOException;
 
+import br.com.leonardoferreira.util.Try;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

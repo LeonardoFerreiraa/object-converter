@@ -1,9 +1,13 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.converter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-interface Converter {
+import br.com.leonardoferreira.domain.TypeAdapters;
+import org.apiguardian.api.API;
+
+@API(status = API.Status.INTERNAL)
+public interface Converter {
 
     Object convert(Object... args);
 

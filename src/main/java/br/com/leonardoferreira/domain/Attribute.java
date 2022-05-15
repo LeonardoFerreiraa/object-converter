@@ -1,8 +1,12 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.domain;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import br.com.leonardoferreira.util.Try;
+import org.apiguardian.api.API;
+
+@API(status = API.Status.INTERNAL)
 public class Attribute {
 
     private final Field field;

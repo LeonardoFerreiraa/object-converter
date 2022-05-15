@@ -1,4 +1,4 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-final class ReflectionUtils {
+import br.com.leonardoferreira.domain.Attribute;
+import org.apiguardian.api.API;
+
+@API(status = API.Status.INTERNAL)
+public final class ReflectionUtils {
 
     private static final String GET_PREFIX = "get";
 

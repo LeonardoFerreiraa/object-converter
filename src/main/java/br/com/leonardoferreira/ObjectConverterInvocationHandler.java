@@ -5,14 +5,16 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 
-public class ObjectConverterInvocationHandler implements InvocationHandler {
+import br.com.leonardoferreira.handler.MethodHandler;
+import br.com.leonardoferreira.util.ReflectionUtils;
+
+class ObjectConverterInvocationHandler implements InvocationHandler {
 
     private final Class<?> target;
 
     private final Map<Method, MethodHandler> handlers;
 
-    public ObjectConverterInvocationHandler(final Class<?> target,
-                                            final Map<Method, MethodHandler> handlers) {
+    public ObjectConverterInvocationHandler(final Class<?> target, final Map<Method, MethodHandler> handlers) {
         this.target = target;
         this.handlers = handlers;
     }

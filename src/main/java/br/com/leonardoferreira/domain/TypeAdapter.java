@@ -1,14 +1,17 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.domain;
 
 import java.util.function.Function;
 
-public class TypeAdapter<T> {
+import org.apiguardian.api.API;
 
-    private final Class<T> clazz;
+@API(status = API.Status.INTERNAL)
+public class TypeAdapter {
 
-    private final Function<Object, T> adapterFunction;
+    private final Class<?> clazz;
 
-    public TypeAdapter(final Class<T> clazz, final Function<Object, T> adapterFunction) {
+    private final Function<Object, Object> adapterFunction;
+
+    public TypeAdapter(final Class<?> clazz, final Function<Object, Object> adapterFunction) {
         this.clazz = clazz;
         this.adapterFunction = adapterFunction;
     }

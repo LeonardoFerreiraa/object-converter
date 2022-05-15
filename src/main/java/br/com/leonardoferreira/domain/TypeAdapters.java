@@ -1,14 +1,17 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.domain;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+import org.apiguardian.api.API;
+
+@API(status = API.Status.INTERNAL)
 public class TypeAdapters {
 
     private final List<TypeAdapter> typeAdapters;
 
-    public TypeAdapters(final List<TypeAdapter> typeAdapters) {
+    private TypeAdapters(final List<TypeAdapter> typeAdapters) {
         this.typeAdapters = typeAdapters;
     }
 
