@@ -2,6 +2,7 @@ package br.com.leonardoferreira;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -9,12 +10,12 @@ class NoArgsConstructorUsingAccessorsConverter implements Converter {
 
     private final Constructor<?> constructor;
 
-    private final Map<String, PropertyParser> propertyConverters;
+    private final List<PropertyParser> propertyParsers;
 
-    public NoArgsConstructorUsingAccessorsConverter(final Constructor<?> constructor,
-                                                    final Map<String, PropertyParser> propertyConverters) {
+    private NoArgsConstructorUsingAccessorsConverter(final Constructor<?> constructor,
+                                                     final List<PropertyParser> propertyParsers) {
         this.constructor = constructor;
-        this.propertyConverters = propertyConverters;
+        this.propertyParsers = propertyParsers;
     }
 
     public static NoArgsConstructorUsingAccessorsConverter from(final Method method,
@@ -34,7 +35,7 @@ class NoArgsConstructorUsingAccessorsConverter implements Converter {
         final Object input = args[0];
         final Object output = Try.sneakyThrow(constructor::newInstance);
 
-        propertyConverters.forEach((fieldName, converter) -> converter.convert(input, output));
+        propertyParsers.forEach(parser -> parser.parse(input, output));
 
         return output;
     }

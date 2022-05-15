@@ -25,18 +25,18 @@ final class ReflectionUtils {
         throw new IllegalAccessException();
     }
 
-    public static Map<String, Accessors> findAllFieldsWithAccessors(final Class<?> clazz) {
+    public static Map<String, Attribute> findAllAttributes(final Class<?> clazz) {
         return findAllFields(clazz)
                 .stream()
-                .map(field -> parseAccessor(clazz, field))
+                .map(field -> parseAttribute(clazz, field))
                 .collect(Pair.toMap());
     }
 
-    private static Pair<String, Accessors> parseAccessor(final Class<?> clazz, final Field field) {
+    private static Pair<String, Attribute> parseAttribute(final Class<?> clazz, final Field field) {
         final Method getter = Try.orNull(() -> clazz.getDeclaredMethod(retrieveGetNameFor(field)));
         final Method setter = Try.orNull(() -> clazz.getDeclaredMethod(retrieveSetNameFor(field), field.getType()));
 
-        return Pair.of(field.getName(), new Accessors(field.getType(), getter, setter));
+        return Pair.of(field.getName(), new Attribute(field, getter, setter));
     }
 
     private static List<Field> findAllFields(final Class<?> clazz) {

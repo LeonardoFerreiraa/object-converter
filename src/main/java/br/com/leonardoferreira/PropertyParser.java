@@ -2,31 +2,33 @@ package br.com.leonardoferreira;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 class PropertyParser {
 
-    private final Method getter;
+    private final Attribute inputAttribute;
 
-    private final Method setter;
+    private final Attribute outputAttribute;
 
     private final Function<Object, Object> typeAdapter;
 
-    public PropertyParser(final Method getter,
-                          final Method setter,
+    public PropertyParser(final Attribute inputAttribute,
+                          final Attribute outputAttribute,
                           final Function<Object, Object> typeAdapter) {
-        this.getter = getter;
-        this.setter = setter;
+        this.inputAttribute = inputAttribute;
+        this.outputAttribute = outputAttribute;
         this.typeAdapter = typeAdapter;
     }
 
-    public static Map<String, PropertyParser> from(final Method method,
-                                                   final Map<Class<?>, Function<Object, Object>> typeAdapters) {
+    public static List<PropertyParser> from(final Method method,
+                                            final Map<Class<?>, Function<Object, Object>> typeAdapters) {
         final Class<?> inputClass = method.getParameterTypes()[0];
-        final Map<String, Accessors> inputFields = ReflectionUtils.findAllFieldsWithAccessors(inputClass);
+        final Map<String, Attribute> inputFields = ReflectionUtils.findAllAttributes(inputClass);
         Optional.ofNullable(method.getAnnotation(Converting.class))
                 .map(Converting::properties)
                 .map(Arrays::stream)
@@ -35,35 +37,31 @@ class PropertyParser {
                 );
 
         final Class<?> outputClass = method.getReturnType();
-        final Map<String, Accessors> outputFields = ReflectionUtils.findAllFieldsWithAccessors(outputClass);
+        final Map<String, Attribute> outputFields = ReflectionUtils.findAllAttributes(outputClass);
 
         return Pair.stream(outputFields)
                 .map(pair -> createPropertyConverter(pair, inputFields, typeAdapters))
                 .filter(Objects::nonNull)
-                .collect(Pair.toMap());
+                .collect(Collectors.toList());
     }
 
-    private static Pair<String, PropertyParser> createPropertyConverter(final Pair<String, Accessors> field,
-                                                                        final Map<String, Accessors> inputFields,
-                                                                        final Map<Class<?>, Function<Object, Object>> typeAdapters) {
-        final Accessors inputAccessors = inputFields.get(field.getFirst());
-        if (inputAccessors == null) {
+    private static PropertyParser createPropertyConverter(final Pair<String, Attribute> field,
+                                                          final Map<String, Attribute> inputFields,
+                                                          final Map<Class<?>, Function<Object, Object>> typeAdapters) {
+        final Attribute inputAttribute = inputFields.get(field.getFirst());
+        if (inputAttribute == null) {
             return null;
         }
 
-        final Method getter = inputAccessors.getGetter();
-        final Method setter = field.getSecond().getSetter();
-        final Function<Object, Object> typeAdapter = createTypeAdapter(field.getSecond().getType(), inputAccessors.getType(), typeAdapters);
+        final Attribute outputAttribute = field.getSecond();
+        final Function<Object, Object> typeAdapter = retrieveTypeAdapter(outputAttribute.getType(), inputAttribute.getType(), typeAdapters);
 
-        return Pair.of(
-                field.getFirst(),
-                new PropertyParser(getter, setter, typeAdapter)
-        );
+        return new PropertyParser(inputAttribute, outputAttribute, typeAdapter);
     }
 
-    private static Function<Object, Object> createTypeAdapter(final Class<?> outputType,
-                                                              final Class<?> inputType,
-                                                              final Map<Class<?>, Function<Object, Object>> typeAdapters) {
+    private static Function<Object, Object> retrieveTypeAdapter(final Class<?> outputType,
+                                                                final Class<?> inputType,
+                                                                final Map<Class<?>, Function<Object, Object>> typeAdapters) {
         if (outputType == inputType) {
             return Function.identity();
         }
@@ -77,10 +75,10 @@ class PropertyParser {
         throw new IllegalArgumentException("unable to find a adapter for " + outputType + " -> " + inputType);
     }
 
-    public void convert(final Object input, final Object output) {
-        final Object value = Try.sneakyThrow(() -> getter.invoke(input));
+    public void parse(final Object input, final Object output) {
+        final Object value = inputAttribute.retrieveValue(input);
         final Object parsedValue = typeAdapter.apply(value);
-        Try.sneakyThrow(() -> setter.invoke(output, parsedValue));
+        outputAttribute.putValue(output, parsedValue);
     }
 
 }
