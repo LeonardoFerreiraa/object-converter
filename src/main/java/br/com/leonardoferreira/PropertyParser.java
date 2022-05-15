@@ -1,7 +1,10 @@
 package br.com.leonardoferreira;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 class PropertyParser {
@@ -24,12 +27,19 @@ class PropertyParser {
                                                    final Map<Class<?>, Function<Object, Object>> typeAdapters) {
         final Class<?> inputClass = method.getParameterTypes()[0];
         final Map<String, Accessors> inputFields = ReflectionUtils.findAllFieldsWithAccessors(inputClass);
+        Optional.ofNullable(method.getAnnotation(Converting.class))
+                .map(Converting::properties)
+                .map(Arrays::stream)
+                .ifPresent(properties ->
+                        properties.forEach(property -> inputFields.put(property.to(), inputFields.get(property.from())))
+                );
 
         final Class<?> outputClass = method.getReturnType();
         final Map<String, Accessors> outputFields = ReflectionUtils.findAllFieldsWithAccessors(outputClass);
 
         return Pair.stream(outputFields)
                 .map(pair -> createPropertyConverter(pair, inputFields, typeAdapters))
+                .filter(Objects::nonNull)
                 .collect(Pair.toMap());
     }
 
@@ -37,6 +47,10 @@ class PropertyParser {
                                                                         final Map<String, Accessors> inputFields,
                                                                         final Map<Class<?>, Function<Object, Object>> typeAdapters) {
         final Accessors inputAccessors = inputFields.get(field.getFirst());
+        if (inputAccessors == null) {
+            return null;
+        }
+
         final Method getter = inputAccessors.getGetter();
         final Method setter = field.getSecond().getSetter();
         final Function<Object, Object> typeAdapter = createTypeAdapter(field.getSecond().getType(), inputAccessors.getType(), typeAdapters);
