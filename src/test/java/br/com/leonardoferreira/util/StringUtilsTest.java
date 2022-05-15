@@ -1,5 +1,6 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.util;
 
+import br.com.leonardoferreira.util.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

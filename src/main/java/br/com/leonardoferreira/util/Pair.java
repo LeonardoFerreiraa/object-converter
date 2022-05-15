@@ -1,4 +1,4 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.util;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -6,7 +6,10 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class Pair<F, S> {
+import org.apiguardian.api.API;
+
+@API(status = API.Status.INTERNAL)
+public class Pair<F, S> {
 
     private final F first;
 

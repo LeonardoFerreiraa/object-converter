@@ -1,15 +1,17 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.converter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.function.Function;
 
-interface Converter {
+import br.com.leonardoferreira.domain.TypeAdapters;
+import org.apiguardian.api.API;
 
-    Object convert(Class<?> returnType, Object... args);
+@API(status = API.Status.INTERNAL)
+public interface Converter {
 
-    static Converter converterFor(Method method, final Map<Class<?>, Function<Object, Object>> typeAdapters) {
+    Object convert(Object... args);
+
+    static Converter converterFor(final Method method, final TypeAdapters typeAdapters) {
         final Class<?> returnType = method.getReturnType();
         for (final Constructor<?> constructor : returnType.getConstructors()) {
             if (constructor.getParameterCount() == 0) {

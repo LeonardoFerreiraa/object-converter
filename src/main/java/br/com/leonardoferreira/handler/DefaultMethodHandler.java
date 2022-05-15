@@ -1,11 +1,14 @@
-package br.com.leonardoferreira;
+package br.com.leonardoferreira.handler;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-class DefaultMethodHandler implements MethodHandler {
+import org.apiguardian.api.API;
+
+@API(status = API.Status.INTERNAL)
+public class DefaultMethodHandler implements MethodHandler {
 
     private MethodHandle handle;
 

@@ -9,13 +9,13 @@ class SimpleConverterTest {
     void shouldDoASimpleConversionTest() {
         final FirstToSecondConverter converter = ObjectConverter.create(FirstToSecondConverter.class);
 
-        final FirstObject first = new FirstObject(
+        final FirstRecord first = new FirstRecord(
                 "first",
                 "second",
                 3
         );
 
-        final SecondObject second = converter.convert(first);
+        final SecondRecord second = converter.convert(first);
 
         Assertions.assertAll(
                 () -> Assertions.assertEquals(first.getFirst(), second.getFirst()),
@@ -25,10 +25,10 @@ class SimpleConverterTest {
     }
 
     public interface FirstToSecondConverter {
-        SecondObject convert(FirstObject firstObject);
+        SecondRecord convert(FirstRecord firstRecord);
     }
 
-    public static class FirstObject {
+    public static class FirstRecord {
 
         private String first;
 
@@ -36,7 +36,7 @@ class SimpleConverterTest {
 
         private int third;
 
-        public FirstObject(final String first, final String second, final int third) {
+        public FirstRecord(final String first, final String second, final int third) {
             this.first = first;
             this.second = second;
             this.third = third;
@@ -67,7 +67,7 @@ class SimpleConverterTest {
         }
     }
 
-    public static class SecondObject {
+    public static class SecondRecord {
 
         private String first;
 

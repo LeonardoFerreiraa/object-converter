@@ -5,13 +5,13 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class SameNameDifferentTypesConverterTest {
+class EqualNameUnequalTypeConvertTest {
 
     @Test
     void shouldDoAConversionWhenPropertiesHasTheSameNameAndDifferentTypesTest() {
-        final FirstToSecondConverter converter = ObjectConverter.create(FirstToSecondConverter.class);
+        final MyConverter converter = ObjectConverter.create(MyConverter.class);
 
-        final FirstObject first = new FirstObject(
+        final FirstRecord first = new FirstRecord(
                "test",
                 1,
                 2L,
@@ -20,7 +20,7 @@ class SameNameDifferentTypesConverterTest {
                 new BigDecimal("5.5")
         );
 
-        final SecondObject second = converter.convertFirstToSecond(first);
+        final SecondRecord second = converter.convertFirstToSecond(first);
 
         Assertions.assertAll(
                 () -> Assertions.assertEquals("test", second.getStringProp()),
@@ -31,7 +31,7 @@ class SameNameDifferentTypesConverterTest {
                 () -> Assertions.assertEquals("5.5", second.getBigDecimalProp())
         );
 
-        final FirstObject firstConverted = converter.convertSecondToFirst(second);
+        final FirstRecord firstConverted = converter.convertSecondToFirst(second);
         Assertions.assertAll(
                 () -> Assertions.assertEquals(first.getStringProp(), firstConverted.getStringProp()),
                 () -> Assertions.assertEquals(first.getIntegerProp(), firstConverted.getIntegerProp()),
@@ -42,15 +42,15 @@ class SameNameDifferentTypesConverterTest {
         );
     }
 
-    public interface FirstToSecondConverter {
+    public interface MyConverter {
 
-        SecondObject convertFirstToSecond(FirstObject firstObject);
+        SecondRecord convertFirstToSecond(FirstRecord firstRecord);
 
-        FirstObject convertSecondToFirst(SecondObject secondObject);
+        FirstRecord convertSecondToFirst(SecondRecord secondRecord);
 
     }
 
-    public static class FirstObject {
+    public static class FirstRecord {
 
         private String stringProp;
 
@@ -64,10 +64,10 @@ class SameNameDifferentTypesConverterTest {
 
         private BigDecimal bigDecimalProp;
 
-        public FirstObject() {
+        public FirstRecord() {
         }
 
-        public FirstObject(final String stringProp,
+        public FirstRecord(final String stringProp,
                            final Integer integerProp,
                            final Long longProp,
                            final Double doubleProp,
@@ -130,7 +130,7 @@ class SameNameDifferentTypesConverterTest {
         }
     }
 
-    public static class SecondObject {
+    public static class SecondRecord {
 
         private String stringProp;
 
@@ -144,10 +144,10 @@ class SameNameDifferentTypesConverterTest {
 
         private String bigDecimalProp;
 
-        public SecondObject() {
+        public SecondRecord() {
         }
 
-        public SecondObject(final String stringProp,
+        public SecondRecord(final String stringProp,
                             final String integerProp,
                             final String longProp,
                             final String doubleProp,
