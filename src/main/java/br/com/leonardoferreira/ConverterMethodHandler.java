@@ -1,6 +1,8 @@
 package br.com.leonardoferreira;
 
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.function.Function;
 
 public class ConverterMethodHandler implements MethodHandler {
 
@@ -13,8 +15,8 @@ public class ConverterMethodHandler implements MethodHandler {
         this.converter = converter;
     }
 
-    public static MethodHandler from(final Method method) {
-        final Converter converter = Converter.converterFor(method);
+    public static MethodHandler from(final Method method, final Map<Class<?>, Function<Object, Object>> typeAdapters) {
+        final Converter converter = Converter.converterFor(method, typeAdapters);
         return new ConverterMethodHandler(method.getReturnType(), converter);
     }
 

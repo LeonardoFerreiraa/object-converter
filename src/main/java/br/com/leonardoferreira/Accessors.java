@@ -4,21 +4,29 @@ import java.lang.reflect.Method;
 
 class Accessors {
 
+    private final Class<?> type;
+
     private final Method getter;
 
     private final Method setter;
 
-    public Accessors(final Method getter, final Method setter) {
+    public Accessors(final Class<?> type,
+                     final Method getter,
+                     final Method setter) {
+        this.type = type;
         this.getter = getter;
         this.setter = setter;
     }
 
-    public Object invokeGetter(final Object obj) {
-        return Try.sneakyThrow(() -> getter.invoke(obj));
+    public Class<?> getType() {
+        return type;
     }
 
-    public void invokeSetter(final Object obj, final Object value) {
-        Try.sneakyThrow(() -> setter.invoke(obj, value));
+    public Method getGetter() {
+        return getter;
     }
 
+    public Method getSetter() {
+        return setter;
+    }
 }

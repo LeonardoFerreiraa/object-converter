@@ -1,6 +1,6 @@
 package br.com.leonardoferreira;
 
-public class Try {
+class Try {
 
     public static <T> T orNull(final SupplierThatThrows<T> supplier) {
         try {

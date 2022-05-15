@@ -3,7 +3,7 @@ package br.com.leonardoferreira;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CommonObjectMethodsTest {
+class CommonObjectMethodsTest {
 
     @Test
     void shouldInvokeEqualsSuccessfullyTest() {
