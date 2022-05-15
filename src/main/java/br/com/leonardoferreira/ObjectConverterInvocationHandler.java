@@ -57,4 +57,5 @@ public class ObjectConverterInvocationHandler implements InvocationHandler {
     public String toString() {
         return this.getClass().getSimpleName() + "(target=" + target.getSimpleName() + ")";
     }
+
 }

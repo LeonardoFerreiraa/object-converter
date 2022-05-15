@@ -36,7 +36,7 @@ final class ReflectionUtils {
         final Method getter = Try.orNull(() -> clazz.getDeclaredMethod(retrieveGetNameFor(field)));
         final Method setter = Try.orNull(() -> clazz.getDeclaredMethod(retrieveSetNameFor(field), field.getType()));
 
-        return Pair.of(field.getName(), new Accessors(getter, setter));
+        return Pair.of(field.getName(), new Accessors(field.getType(), getter, setter));
     }
 
     private static List<Field> findAllFields(final Class<?> clazz) {

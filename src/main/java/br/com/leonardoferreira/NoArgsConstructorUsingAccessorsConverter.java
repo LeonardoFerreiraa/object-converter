@@ -3,25 +3,22 @@ package br.com.leonardoferreira;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.function.Function;
 
 class NoArgsConstructorUsingAccessorsConverter implements Converter {
 
     private final Constructor<?> constructor;
 
-    private final Map<String, Accessors> inputFields;
+    private final Map<String, PropertyParser> propertyConverters;
 
-    private final Map<String, Accessors> outputFields;
-
-    private NoArgsConstructorUsingAccessorsConverter(final Constructor<?> constructor,
-                                                     final Map<String, Accessors> inputFields,
-                                                     final Map<String, Accessors> outputFields) {
+    public NoArgsConstructorUsingAccessorsConverter(final Constructor<?> constructor,
+                                                    final Map<String, PropertyParser> propertyConverters) {
         this.constructor = constructor;
-        this.inputFields = inputFields;
-        this.outputFields = outputFields;
+        this.propertyConverters = propertyConverters;
     }
 
-    public static NoArgsConstructorUsingAccessorsConverter from(final Method method) {
-        final Class<?> inputClass = method.getParameterTypes()[0];
+    public static NoArgsConstructorUsingAccessorsConverter from(final Method method,
+                                                                final Map<Class<?>, Function<Object, Object>> typeAdapters) {
         final Class<?> outputClass = method.getReturnType();
 
         final Constructor<?> constructor = Try.sneakyThrow(outputClass::getConstructor);
@@ -29,8 +26,7 @@ class NoArgsConstructorUsingAccessorsConverter implements Converter {
 
         return new NoArgsConstructorUsingAccessorsConverter(
                 constructor,
-                ReflectionUtils.findAllFieldsWithAccessors(inputClass),
-                ReflectionUtils.findAllFieldsWithAccessors(outputClass)
+                PropertyParser.from(method, typeAdapters)
         );
     }
 
@@ -38,13 +34,7 @@ class NoArgsConstructorUsingAccessorsConverter implements Converter {
         final Object input = args[0];
         final Object output = Try.sneakyThrow(constructor::newInstance);
 
-        outputFields.forEach((fieldName, outputAccessors) -> {
-            final Accessors inputAccessors = inputFields.get(fieldName);
-            if (inputAccessors != null) {
-                final Object value = inputAccessors.invokeGetter(input);
-                outputAccessors.invokeSetter(output, value);
-            }
-        });
+        propertyConverters.forEach((fieldName, converter) -> converter.convert(input, output));
 
         return output;
     }
