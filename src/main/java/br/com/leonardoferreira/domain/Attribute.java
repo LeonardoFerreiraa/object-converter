@@ -18,16 +18,27 @@ public class Attribute {
 
     private final boolean readOnlyField;
 
-    public Attribute(final Field field, final Method getter, final Method setter) {
+    private Attribute(final Field field, final Method getter, final Method setter, final boolean readOnlyField) {
         this.field = field;
         this.getter = getter;
         this.setter = setter;
+        this.readOnlyField = readOnlyField;
+    }
 
-        this.readOnlyField = Modifier.isFinal(field.getModifiers());
+    public static Attribute from(final Field field, final Method getter, final Method setter, final ObjectConverterOptions options) {
+        final boolean readOnlyField = Modifier.isFinal(field.getModifiers());
 
         if (getter == null || setter == null) {
-            field.setAccessible(true);
+            if (!field.isAccessible()) {
+                if (options.isForceAccessible()) {
+                    field.setAccessible(true);
+                } else {
+                    throw new IllegalStateException("field is not accessible");
+                }
+            }
         }
+
+        return new Attribute(field, getter, setter, readOnlyField);
     }
 
     public Class<?> getType() {

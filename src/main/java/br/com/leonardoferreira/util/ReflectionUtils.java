@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import br.com.leonardoferreira.domain.Attribute;
+import br.com.leonardoferreira.domain.ObjectConverterOptions;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.INTERNAL)
@@ -29,18 +30,18 @@ public final class ReflectionUtils {
         throw new IllegalAccessException();
     }
 
-    public static Map<String, Attribute> findAllAttributes(final Class<?> clazz) {
+    public static Map<String, Attribute> findAllAttributes(final Class<?> clazz, final ObjectConverterOptions options) {
         return findAllFields(clazz)
                 .stream()
-                .map(field -> parseAttribute(clazz, field))
+                .map(field -> parseAttribute(clazz, field, options))
                 .collect(Pair.toMap());
     }
 
-    private static Pair<String, Attribute> parseAttribute(final Class<?> clazz, final Field field) {
+    private static Pair<String, Attribute> parseAttribute(final Class<?> clazz, final Field field, final ObjectConverterOptions options) {
         final Method getter = Try.orNull(() -> clazz.getDeclaredMethod(retrieveGetNameFor(field)));
         final Method setter = Try.orNull(() -> clazz.getDeclaredMethod(retrieveSetNameFor(field), field.getType()));
 
-        return Pair.of(field.getName(), new Attribute(field, getter, setter));
+        return Pair.of(field.getName(), Attribute.from(field, getter, setter, options));
     }
 
     private static List<Field> findAllFields(final Class<?> clazz) {

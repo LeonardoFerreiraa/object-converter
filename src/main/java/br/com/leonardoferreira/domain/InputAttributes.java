@@ -18,9 +18,9 @@ public class InputAttributes {
         this.inputAttributes = inputAttributes;
     }
 
-    public static InputAttributes from(final Method method) {
+    public static InputAttributes from(final Method method, final ObjectConverterOptions options) {
         final Class<?> inputType = method.getParameterTypes()[0];
-        final Map<String, Attribute> inputAttributes = ReflectionUtils.findAllAttributes(inputType);
+        final Map<String, Attribute> inputAttributes = ReflectionUtils.findAllAttributes(inputType, options);
 
         Optional.ofNullable(method.getAnnotation(Converting.class))
                 .map(Converting::properties)

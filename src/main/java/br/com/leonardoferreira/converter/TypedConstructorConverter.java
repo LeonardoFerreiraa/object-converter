@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import br.com.leonardoferreira.domain.Attribute;
 import br.com.leonardoferreira.domain.InputAttributes;
+import br.com.leonardoferreira.domain.ObjectConverterOptions;
 import br.com.leonardoferreira.domain.TypeAdapter;
 import br.com.leonardoferreira.domain.TypeAdapters;
 import br.com.leonardoferreira.util.Pair;
@@ -25,10 +26,9 @@ class TypedConstructorConverter implements Converter {
         this.fields = fields;
     }
 
-    public static Converter from(final Constructor<?> constructor,
-                                 final Method method,
-                                 final TypeAdapters typeAdapters) {
-        final InputAttributes inputAttributes = InputAttributes.from(method);
+    public static Converter from(final Constructor<?> constructor, final Method method, final ObjectConverterOptions options) {
+        final TypeAdapters typeAdapters = options.getTypeAdapters();
+        final InputAttributes inputAttributes = InputAttributes.from(method, options);
 
         final List<Pair<Attribute, TypeAdapter>> fields = Arrays.stream(constructor.getParameters())
                 .map(it -> {
@@ -48,7 +48,11 @@ class TypedConstructorConverter implements Converter {
                 .collect(Collectors.toList());
 
         if (!constructor.isAccessible()) {
-            constructor.setAccessible(true);
+            if (options.isForceAccessible()) {
+                constructor.setAccessible(true);
+            } else {
+                throw new IllegalStateException("constructor is not acessible");
+            }
         }
 
         return new TypedConstructorConverter(constructor, fields);

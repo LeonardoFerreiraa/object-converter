@@ -25,14 +25,14 @@ public class PropertyParser {
         this.typeAdapter = typeAdapter;
     }
 
-    public static List<PropertyParser> from(final Method method, final TypeAdapters typeAdapters) {
-        final InputAttributes inputAttributes = InputAttributes.from(method);
+    public static List<PropertyParser> from(final Method method, final ObjectConverterOptions options) {
+        final InputAttributes inputAttributes = InputAttributes.from(method, options);
 
         final Class<?> outputClass = method.getReturnType();
-        final Map<String, Attribute> outputFields = ReflectionUtils.findAllAttributes(outputClass);
+        final Map<String, Attribute> outputFields = ReflectionUtils.findAllAttributes(outputClass, options);
 
         return Pair.stream(outputFields)
-                .map(pair -> createPropertyConverter(pair, inputAttributes, typeAdapters))
+                .map(pair -> createPropertyConverter(pair, inputAttributes, options.getTypeAdapters()))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

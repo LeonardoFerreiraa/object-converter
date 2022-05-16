@@ -4,8 +4,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import br.com.leonardoferreira.domain.ObjectConverterOptions;
 import br.com.leonardoferreira.domain.PropertyParser;
-import br.com.leonardoferreira.domain.TypeAdapters;
 import br.com.leonardoferreira.util.Try;
 
 class NoArgsConstructorConverter implements Converter {
@@ -20,15 +20,21 @@ class NoArgsConstructorConverter implements Converter {
         this.propertyParsers = propertyParsers;
     }
 
-    public static NoArgsConstructorConverter from(final Method method, final TypeAdapters typeAdapters) {
+    public static NoArgsConstructorConverter from(final Method method, final ObjectConverterOptions options) {
         final Class<?> outputClass = method.getReturnType();
 
         final Constructor<?> constructor = Try.sneakyThrow(() -> outputClass.getConstructor());
-        constructor.setAccessible(true);
+        if (!constructor.isAccessible()) {
+            if (options.isForceAccessible()) {
+                constructor.setAccessible(true);
+            } else {
+                throw new IllegalStateException("constructor is not accessible");
+            }
+        }
 
         return new NoArgsConstructorConverter(
                 constructor,
-                PropertyParser.from(method, typeAdapters)
+                PropertyParser.from(method, options)
         );
     }
 
