@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import br.com.leonardoferreira.converter.Converter;
+import br.com.leonardoferreira.domain.ObjectConverterOptions;
 import br.com.leonardoferreira.domain.TypeAdapter;
 import br.com.leonardoferreira.domain.TypeAdapters;
 import br.com.leonardoferreira.handler.ConverterMethodHandler;
@@ -32,11 +33,13 @@ public class ObjectConverter {
     }
 
     public static <T> T create(final Class<T> target) {
+        final ObjectConverterOptions options = new ObjectConverterOptions(true, DEFAULT_TYPE_ADAPTERS);
+
         final Map<Method, MethodHandler> handlers = Arrays.stream(target.getMethods())
                 .map(method ->
                         Pair.of(
                                 method,
-                                method.isDefault() ? DefaultMethodHandler.from(method) : new ConverterMethodHandler(Converter.converterFor(method, DEFAULT_TYPE_ADAPTERS))
+                                method.isDefault() ? DefaultMethodHandler.from(method) : new ConverterMethodHandler(Converter.converterFor(method, options))
                         )
                 )
                 .collect(Pair.toMap());

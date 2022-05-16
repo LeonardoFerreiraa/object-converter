@@ -11,14 +11,13 @@ class EqualNameUnequalTypeConvertTest {
     void shouldDoAConversionWhenPropertiesHasTheSameNameAndDifferentTypesTest() {
         final MyConverter converter = ObjectConverter.create(MyConverter.class);
 
-        final FirstRecord first = new FirstRecord(
-               "test",
-                1,
-                2L,
-                3.3,
-                4.4f,
-                new BigDecimal("5.5")
-        );
+        final FirstRecord first = new FirstRecord();
+        first.setStringProp("test");
+        first.setIntegerProp(1);
+        first.setLongProp(2L);
+        first.setDoubleProp(3.3);
+        first.setFloatProp(4.4f);
+        first.setBigDecimalProp(new BigDecimal("5.5"));
 
         final SecondRecord second = converter.convertFirstToSecond(first);
 
@@ -65,20 +64,6 @@ class EqualNameUnequalTypeConvertTest {
         private BigDecimal bigDecimalProp;
 
         public FirstRecord() {
-        }
-
-        public FirstRecord(final String stringProp,
-                           final Integer integerProp,
-                           final Long longProp,
-                           final Double doubleProp,
-                           final Float floatProp,
-                           final BigDecimal bigDecimalProp) {
-            this.stringProp = stringProp;
-            this.integerProp = integerProp;
-            this.longProp = longProp;
-            this.doubleProp = doubleProp;
-            this.floatProp = floatProp;
-            this.bigDecimalProp = bigDecimalProp;
         }
 
         public String getStringProp() {
@@ -145,20 +130,6 @@ class EqualNameUnequalTypeConvertTest {
         private String bigDecimalProp;
 
         public SecondRecord() {
-        }
-
-        public SecondRecord(final String stringProp,
-                            final String integerProp,
-                            final String longProp,
-                            final String doubleProp,
-                            final String floatProp,
-                            final String bigDecimalProp) {
-            this.stringProp = stringProp;
-            this.integerProp = integerProp;
-            this.longProp = longProp;
-            this.doubleProp = doubleProp;
-            this.floatProp = floatProp;
-            this.bigDecimalProp = bigDecimalProp;
         }
 
         public String getStringProp() {

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import br.com.leonardoferreira.domain.Attribute;
+import br.com.leonardoferreira.domain.ObjectConverterOptions;
 import org.apiguardian.api.API;
 
 @API(status = API.Status.INTERNAL)
@@ -29,18 +30,18 @@ public final class ReflectionUtils {
         throw new IllegalAccessException();
     }
 
-    public static Map<String, Attribute> findAllAttributes(final Class<?> clazz) {
+    public static Map<String, Attribute> findAllAttributes(final Class<?> clazz, final ObjectConverterOptions options) {
         return findAllFields(clazz)
                 .stream()
-                .map(field -> parseAttribute(clazz, field))
+                .map(field -> parseAttribute(clazz, field, options))
                 .collect(Pair.toMap());
     }
 
-    private static Pair<String, Attribute> parseAttribute(final Class<?> clazz, final Field field) {
+    private static Pair<String, Attribute> parseAttribute(final Class<?> clazz, final Field field, final ObjectConverterOptions options) {
         final Method getter = Try.orNull(() -> clazz.getDeclaredMethod(retrieveGetNameFor(field)));
         final Method setter = Try.orNull(() -> clazz.getDeclaredMethod(retrieveSetNameFor(field), field.getType()));
 
-        return Pair.of(field.getName(), new Attribute(field, getter, setter));
+        return Pair.of(field.getName(), Attribute.from(field, getter, setter, options));
     }
 
     private static List<Field> findAllFields(final Class<?> clazz) {
@@ -51,7 +52,6 @@ public final class ReflectionUtils {
         }
 
         fields.addAll(Arrays.stream(clazz.getDeclaredFields())
-                .filter(field -> !Modifier.isFinal(field.getModifiers()))
                 .filter(field -> !Modifier.isStatic(field.getModifiers()))
                 .collect(Collectors.toList()));
 
@@ -81,6 +81,12 @@ public final class ReflectionUtils {
         return HASH_CODE_METHOD_NAME.equals(method.getName()) &&
                 method.getParameterCount() == 0 &&
                 "int".equals(method.getReturnType().getName());
+    }
+
+    public static boolean isBasicType(final Class<?> clazz) {
+        return clazz.getPackage() == null ||
+                clazz.getPackage().getName().startsWith("java.lang") ||
+                clazz.getPackage().getName().startsWith("java.math");
     }
 
 }
