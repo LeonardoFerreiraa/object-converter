@@ -51,7 +51,6 @@ public final class ReflectionUtils {
         }
 
         fields.addAll(Arrays.stream(clazz.getDeclaredFields())
-                .filter(field -> !Modifier.isFinal(field.getModifiers()))
                 .filter(field -> !Modifier.isStatic(field.getModifiers()))
                 .collect(Collectors.toList()));
 
@@ -81,6 +80,12 @@ public final class ReflectionUtils {
         return HASH_CODE_METHOD_NAME.equals(method.getName()) &&
                 method.getParameterCount() == 0 &&
                 "int".equals(method.getReturnType().getName());
+    }
+
+    public static boolean isBasicType(final Class<?> clazz) {
+        return clazz.getPackage() == null ||
+                clazz.getPackage().getName().startsWith("java.lang") ||
+                clazz.getPackage().getName().startsWith("java.math");
     }
 
 }

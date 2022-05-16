@@ -13,6 +13,13 @@ public class Try {
         }
     }
 
+    public static void sneakyThrow(final RunnableThatThrows runnable) {
+        sneakyThrow(() -> {
+            runnable.run();
+            return Void.class;
+        });
+    }
+
     public static <T> T sneakyThrow(final SupplierThatThrows<T> supplier) {
         try {
             return supplier.get();
@@ -33,6 +40,11 @@ public class Try {
     @FunctionalInterface
     public interface SupplierThatThrows<T> {
         T get() throws Throwable;
+    }
+
+    @FunctionalInterface
+    public interface RunnableThatThrows {
+        void run() throws Throwable;
     }
 
 }

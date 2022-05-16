@@ -79,6 +79,8 @@
                 <version>3.8.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
+                    <parameters>true</parameters>
+                    <testCompilerArgument>-parameters</testCompilerArgument>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>

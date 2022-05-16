@@ -8,25 +8,25 @@ import br.com.leonardoferreira.domain.PropertyParser;
 import br.com.leonardoferreira.domain.TypeAdapters;
 import br.com.leonardoferreira.util.Try;
 
-class NoArgsConstructorUsingAccessorsConverter implements Converter {
+class NoArgsConstructorConverter implements Converter {
 
     private final Constructor<?> constructor;
 
     private final List<PropertyParser> propertyParsers;
 
-    private NoArgsConstructorUsingAccessorsConverter(final Constructor<?> constructor,
-                                                     final List<PropertyParser> propertyParsers) {
+    private NoArgsConstructorConverter(final Constructor<?> constructor,
+                                       final List<PropertyParser> propertyParsers) {
         this.constructor = constructor;
         this.propertyParsers = propertyParsers;
     }
 
-    public static NoArgsConstructorUsingAccessorsConverter from(final Method method, final TypeAdapters typeAdapters) {
+    public static NoArgsConstructorConverter from(final Method method, final TypeAdapters typeAdapters) {
         final Class<?> outputClass = method.getReturnType();
 
-        final Constructor<?> constructor = Try.sneakyThrow(outputClass::getConstructor);
+        final Constructor<?> constructor = Try.sneakyThrow(() -> outputClass.getConstructor());
         constructor.setAccessible(true);
 
-        return new NoArgsConstructorUsingAccessorsConverter(
+        return new NoArgsConstructorConverter(
                 constructor,
                 PropertyParser.from(method, typeAdapters)
         );
@@ -34,7 +34,7 @@ class NoArgsConstructorUsingAccessorsConverter implements Converter {
 
     public Object convert(final Object... args) {
         final Object input = args[0];
-        final Object output = Try.sneakyThrow(constructor::newInstance);
+        final Object output = Try.sneakyThrow(() -> constructor.newInstance());
 
         propertyParsers.forEach(parser -> parser.parse(input, output));
 
